@@ -1,45 +1,105 @@
-
-import java.util.Deque;
-import java.util.ArrayDeque;
 import java.util.Scanner;
 public class PalindromeCheckerApp {
+    // Node class for Singly Linked List
+    static class Node {
+        char data;
+        Node next;
+
+        Node(char data) {
+            this.data = data;
+            this.next = null;
+        }
+    }
+
+    static Node head = null;
+
+    // Add node at end
+    public static void add(char data) {
+        Node newNode = new Node(data);
+
+        if (head == null) {
+            head = newNode;
+            return;
+        }
+
+        Node temp = head;
+        while (temp.next != null) {
+            temp = temp.next;
+        }
+        temp.next = newNode;
+    }
+
+    // Check palindrome using fast/slow pointer & reverse
+    public static boolean isPalindrome() {
+
+        if (head == null || head.next == null)
+            return true;
+
+        Node slow = head;
+        Node fast = head;
+
+        // Find middle
+        while (fast != null && fast.next != null) {
+            slow = slow.next;
+            fast = fast.next.next;
+        }
+
+        // Reverse second half
+        Node prev = null;
+        Node current = slow;
+        Node next;
+
+        while (current != null) {
+            next = current.next;
+            current.next = prev;
+            prev = current;
+            current = next;
+        }
+
+        // Compare halves
+        Node firstHalf = head;
+        Node secondHalf = prev;
+
+        while (secondHalf != null) {
+            if (firstHalf.data != secondHalf.data)
+                return false;
+
+            firstHalf = firstHalf.next;
+            secondHalf = secondHalf.next;
+        }
+
+        return true;
+    }
+
+    // Reset list before new input
+    public static void clearList() {
+        head = null;
+    }
+
+    /**
+     * Application entry point for UC8
+     */
+
     public static void main (String[] args)
     {
-        // Create Scanner object
+
         Scanner scanner = new Scanner(System.in);
 
-        // Accept input from user
-        System.out.print("Enter text: ");
+        System.out.print("Enter a string: ");
         String input = scanner.nextLine();
 
-        // Create a Deque to store characters
-        Deque<Character> deque = new ArrayDeque<>();
+        clearList();
 
-        // Add each character to the deque
+        // Convert input string to linked list
         for (char c : input.toCharArray()) {
-            deque.addLast(c);
+            add(c);
         }
 
-        // Flag to track palindrome result
-        boolean isPalindrome = true;
+        boolean result = isPalindrome();
 
-        // Continue comparison while more than one element exists
-        while (deque.size() > 1) {
-
-            char front = deque.removeFirst();
-            char rear = deque.removeLast();
-
-            if (front != rear) {
-                isPalindrome = false;
-                break;
-            }
-        }
-
-        // Display result
         System.out.println("Input : " + input);
-        System.out.println("Is Palindrome? : " + isPalindrome);
+        System.out.println("Is Palindrome? : " + result);
 
-        // Close scanner
         scanner.close();
     }
 }
