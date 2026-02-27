@@ -7,11 +7,11 @@ public class PalindromeCheckerApp {
         System.out.print("Input : ");
         String input = scanner.nextLine();
 
-        // Create service object
-        PalindromeService service = new PalindromeService();
+        // Inject strategy at runtime
+        PalindromeStrategy strategy = new StackStrategy();
 
-        // Call service method
-        boolean result = service.checkPalindrome(input);
+        // Execute selected strategy
+        boolean result = strategy.check(input);
 
         System.out.println("Is Palindrome? : " + result);
 
@@ -20,31 +20,52 @@ public class PalindromeCheckerApp {
 }
 
 /**
- * Service class that contains palindrome logic.
+ * =========================================================
+ * INTERFACE – PalindromeStrategy
+ * =========================================================
+ *
+ * This interface defines a contract for all
+ * palindrome checking algorithms.
  */
-class PalindromeService {
+interface PalindromeStrategy {
+
+    boolean check(String input);
+}
+
+/**
+ * =========================================================
+ * CLASS – StackStrategy
+ * =========================================================
+ *
+ * This class provides a Stack based implementation
+ * of the PalindromeStrategy interface.
+ *
+ * It uses LIFO behavior to reverse characters
+ * and compare them with the original sequence.
+ */
+class StackStrategy implements PalindromeStrategy {
 
     /**
-     * Checks whether the input string is a palindrome.
+     * Implements palindrome validation using Stack.
      *
-     * @param input Input string
+     * @param input String to validate
      * @return true if palindrome, false otherwise
      */
-    public boolean checkPalindrome(String input) {
+    public boolean check(String input) {
 
-        // Initialize pointers
-        int start = 0;
-        int end = input.length() - 1;
+        // Create a stack to store characters
+        java.util.Stack<Character> stack = new java.util.Stack<>();
 
-        // Compare characters moving inward
-        while (start < end) {
+        // Push each character of the input string onto the stack
+        for (char c : input.toCharArray()) {
+            stack.push(c);
+        }
 
-            if (input.charAt(start) != input.charAt(end)) {
+        // Compare characters by popping from the stack
+        for (char c : input.toCharArray()) {
+            if (c != stack.pop()) {
                 return false;
             }
-
-            start++;
-            end--;
         }
 
         return true;
